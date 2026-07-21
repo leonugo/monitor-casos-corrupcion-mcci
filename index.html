@@ -170,6 +170,16 @@ ul.notas-lista li{display:flex;flex-direction:column;gap:.05rem;font-size:.85rem
 ul.notas-lista .meta{font-family:var(--mono);font-size:.68rem;color:var(--muted);}
 ul.notas-lista a{color:var(--ink);text-decoration:none;}
 ul.notas-lista a:hover{color:var(--stamp);text-decoration:underline;}
+li.notas-dia-item{border-bottom:none;padding-bottom:0;}
+details.notas-dia{border:1px solid var(--line-soft);border-radius:4px;background:var(--tab-bg);width:100%;}
+details.notas-dia summary{cursor:pointer;list-style:none;padding:.5rem .6rem;display:flex;flex-direction:column;gap:.15rem;}
+details.notas-dia summary::-webkit-details-marker{display:none;}
+details.notas-dia summary::before{content:"▸ ";color:var(--navy);}
+details.notas-dia[open] summary::before{content:"▾ ";}
+details.notas-dia .notas-dia-titulo{font-size:.85rem;color:var(--ink);}
+.notas-lista-anidada{padding:0 .6rem .6rem 1.3rem;margin:0;}
+.notas-lista-anidada li{border-bottom:1px dotted var(--line-soft);}
+.notas-lista-anidada li:last-child{border-bottom:none;padding-bottom:0;}
 .entidad-chip{font-size:.78rem;padding:.15rem .55rem;border-radius:999px;background:var(--stamp-soft);color:var(--stamp);cursor:pointer;border:none;font-family:var(--sans);}
 .entidad-chip.tipo-empresa{background:var(--tab-bg);color:var(--navy);}
 .entidad-chip.tipo-institucion{background:var(--tab-bg);color:var(--muted);}
@@ -987,7 +997,7 @@ function crearBuscadorCasos(dataset, ids, onRender) {
       '<p class="muted">Sin novedades este mes en casos anteriores con estos filtros.</p>';
 
     document.getElementById(ids.contador).textContent = `${resultados.length} de ${dataset.length} casos`;
-    document.getElementById(ids.resultados).innerHTML = casosPorAnioHTML(resultados) ||
+    document.getElementById(ids.resultados).innerHTML = casosPorAnioHTML(resultados, !!state.q) ||
       '<p class="muted">Sin resultados con estos filtros.</p>';
 
     if (onRender) onRender(resultados);
@@ -1138,13 +1148,44 @@ renderEntidades(EMPRESAS, "lista-empresas", "contador-empresas", "");
 renderEntidades(PERSONAS, "lista-personas", "contador-personas", "");
 renderEntidades(INSTITUCIONES, "lista-instituciones", "contador-instituciones", "");
 
-function casoHTML(c) {
-  // Subnotas: cada nota individual con su fecha, para ver la evolucion del caso
-  // en el tiempo (no solo "quien lo cubrio" sino "que salio y cuando").
-  const notas = [...c.medios].sort((a, b) => (a.fecha || "").localeCompare(b.fecha || "")).map(m => {
-    const esNueva = m.fecha && m.fecha.slice(0, 7) === MES_ACTUAL;
-    return `<li><span class="meta">${m.fecha ? formatFecha(m.fecha) : "s/f"} · ${m.nombre}${esNueva ? ' <span class="nota-nueva">nueva</span>' : ""}</span><a href="${m.url}" target="_blank" rel="noopener">${m.titulo}</a></li>`;
+function notaItemHTML(m) {
+  const esNueva = m.fecha && m.fecha.slice(0, 7) === MES_ACTUAL;
+  return `<li><span class="meta">${m.fecha ? formatFecha(m.fecha) : "s/f"} · ${m.nombre}${esNueva ? ' <span class="nota-nueva">nueva</span>' : ""}</span><a href="${m.url}" target="_blank" rel="noopener">${m.titulo}</a></li>`;
+}
+
+// Agrupa las notas de un caso por fecha de publicacion -- cuando muchos medios
+// cubren el mismo dia (tipico en detenciones/comparecencias, ver caso Ruffo),
+// en vez de una lista plana con 20-30 titulares casi identicos se colapsa en
+// un renglon por fecha (titulo representativo + cuantos mas) que se expande
+// al dar clic. Un dia con una sola nota se muestra igual que antes, sin
+// envolver innecesariamente.
+function notasAgrupadasHTML(medios) {
+  const ordenadas = [...medios].sort((a, b) => (a.fecha || "").localeCompare(b.fecha || ""));
+  const grupos = new Map();
+  ordenadas.forEach(m => {
+    const key = m.fecha || "s/f";
+    if (!grupos.has(key)) grupos.set(key, []);
+    grupos.get(key).push(m);
+  });
+
+  return [...grupos.entries()].map(([fecha, notasDia]) => {
+    if (notasDia.length === 1) return notaItemHTML(notasDia[0]);
+    const esNueva = fecha !== "s/f" && fecha.slice(0, 7) === MES_ACTUAL;
+    return `<li class="notas-dia-item">
+      <details class="notas-dia">
+        <summary>
+          <span class="meta">${fecha !== "s/f" ? formatFecha(fecha) : "s/f"}${esNueva ? ' <span class="nota-nueva">nueva</span>' : ""} · ${notasDia.length} notas este día</span>
+          <span class="notas-dia-titulo">${notasDia[0].titulo}</span>
+        </summary>
+        <ul class="notas-lista notas-lista-anidada">${notasDia.map(notaItemHTML).join("")}</ul>
+      </details>
+    </li>`;
   }).join("") || '<li class="muted">Sin notas ligadas.</li>';
+}
+
+function casoHTML(c) {
+  // Subnotas agrupadas por fecha -- ver notasAgrupadasHTML arriba.
+  const notas = notasAgrupadasHTML(c.medios);
 
   const entidades = c.entidades.map(e => {
     const partidoTxt = e.partido ? ` (${e.partido})` : "";
@@ -1195,7 +1236,11 @@ function casoHTML(c) {
 // Agrupa el "Listado general" por año (primera_aparicion), cada grupo colapsado
 // por default -- el listado plano de 776+ casos era scroll infinito; agrupar y
 // exigir clic para expandir cada año resuelve eso sin perder acceso a nada.
-function casosPorAnioHTML(resultados) {
+// Cuando hay una busqueda de texto activa (abierto=true) los grupos se marcan
+// `open` desde el render inicial: ya son pocos resultados, forzar un clic por
+// año para verlos estorba en vez de ayudar. La etiqueta de año se conserva
+// igual (para no perder el contexto temporal), solo cambia si arranca abierta.
+function casosPorAnioHTML(resultados, abierto) {
   const grupos = new Map();
   resultados.forEach(c => {
     const anio = c.primera_aparicion ? c.primera_aparicion.slice(0, 4) : "Sin fecha";
@@ -1204,7 +1249,7 @@ function casosPorAnioHTML(resultados) {
   });
   const anios = [...grupos.keys()].sort().reverse();
   return anios.map(anio => `
-    <details class="anio-group">
+    <details class="anio-group"${abierto ? " open" : ""}>
       <summary>
         <span class="t">${anio}</span>
         <span class="meta">${grupos.get(anio).length} caso${grupos.get(anio).length === 1 ? "" : "s"}</span>
