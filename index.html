@@ -293,6 +293,13 @@ details.anio-group .anio-group-body details.caso{margin-top:.6rem;}
   display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:.85rem;font-weight:700;}
 .familia-head h3{font-family:var(--serif);font-size:1rem;margin:0 0 .2rem;color:var(--navy);}
 .familia-q{font-family:var(--mono);font-size:.72rem;color:var(--stamp);margin:0;}
+.creditos-nota{font-size:.82rem;color:var(--muted);font-style:italic;max-width:68ch;margin:0 0 .6rem;}
+.creditos-metodo-nota{font-family:var(--mono);font-size:.7rem;color:var(--muted);max-width:68ch;margin:0;}
+.creditos-liderazgo{margin-top:1.75rem;padding-top:1.5rem;border-top:2px solid var(--gold);}
+.creditos-liderazgo>p:first-child{font-size:.9rem;color:var(--muted);max-width:68ch;margin:0 0 .9rem;}
+.creditos-firma{font-family:var(--serif);font-size:1rem;color:var(--navy);font-weight:700;margin:0 0 .7rem;}
+.creditos-firma .cargo{display:block;font-family:var(--mono);font-size:.68rem;font-weight:400;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.03em;margin-top:.15rem;}
 details.metodo-cat{border-top:1px solid var(--line-soft);padding:.6rem 0 0;margin-top:.6rem;}
 details.metodo-cat summary{cursor:pointer;list-style:none;font-weight:600;font-family:var(--sans);font-size:.88rem;color:var(--ink);}
 details.metodo-cat summary::-webkit-details-marker{display:none;}
@@ -416,6 +423,7 @@ details.metodo-cat .metodo-body .no-confundir b{color:var(--stamp);}
     <button class="tab-btn" data-tab="mcci">Investigaciones MCCI</button>
     <button class="tab-btn" data-tab="graficas">Gráficas</button>
     <button class="tab-btn" data-tab="metodologia">Metodología</button>
+    <button class="tab-btn" data-tab="creditos">Créditos</button>
   </div>
 
   <div id="tab-casos" class="tab-panel active">
@@ -1164,6 +1172,52 @@ details.metodo-cat .metodo-body .no-confundir b{color:var(--stamp);}
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div id="tab-creditos" class="tab-panel">
+    <div class="panel metodo-intro">
+      <p>Este producto existe porque Mexicanos Contra la Corrupción y la Impunidad ha logrado sostenerse, con el
+      paso del tiempo, como una organización de la sociedad civil dedicada a investigar la corrupción en México.
+      Sostenerse no ha sido automático: ha requerido, sobre todo, que muchas personas —dentro y fuera de esta
+      unidad— sigan construyendo, con datos y con método, la evidencia sobre la que se apoya el trabajo de MCCI.</p>
+      <p>La Unidad de Investigación Aplicada (UIA) es una de las áreas de MCCI. Su trabajo consiste en
+      sistematizar información pública y periodística sobre corrupción para que sea consultable, verificable y
+      útil —para periodistas, investigadores, y cualquier persona interesada. Este buscador es un ejemplo de ese
+      trabajo: tecnología cívica construida con las capacidades que la propia sociedad civil ha logrado reunir,
+      sin ánimo de espectáculo, como una herramienta más para la rendición de cuentas.</p>
+    </div>
+
+    <div class="list-section">
+      <div class="section-heading"><h2>Agradecimientos</h2></div>
+      <p class="metodo-p">Ningún sistema de datos se construye solo. A lo largo del tiempo, un número importante
+      de investigadores ha aportado a la Unidad de Investigación Aplicada: revisando notas, clasificando casos,
+      corrigiendo criterios, escribiendo y reescribiendo el código que hoy sostiene este buscador.</p>
+
+      <p class="metodo-p">Agradecemos especialmente a <b>Javier Martínez</b>, <b>José Manuel Toral</b>,
+      <b>Katia</b>, <b>Leonor Ortíz-Monasterio</b>, <b>Lorenzo León</b>, <b>Mara</b>, <b>Marina</b>,
+      <b>Ricardo Alvarado Andalón</b>, <b>Santiago</b>, <b>Sebas</b>, <b>Sofía Ramírez</b> y <b>Torhton</b>,
+      investigadores que, en distintos momentos, han sido parte de la Unidad de Investigación Aplicada. Cada
+      quien aportó lo que en su momento hacía falta: revisar notas, clasificar casos, corregir criterios, o
+      escribir código —el trabajo detrás de un sistema de datos rara vez lo hace una sola persona, y este no es
+      la excepción.</p>
+
+      <p class="creditos-nota">Esta lista es un ejercicio de memoria institucional, no un archivo cerrado.
+      Apuntamos aquí a la transparencia sobre la exactitud perfecta de un primer intento: es posible que falte
+      algún nombre, y esta página se actualiza conforme lo vamos completando. Si formaste parte de la unidad y no
+      apareces aquí, o algún nombre está incompleto, escríbenos para corregirlo.</p>
+
+      <p class="creditos-metodo-nota">Nota metodológica: esta lista se construyó a partir de los registros
+      internos de la Unidad de Investigación Aplicada y de la memoria directa de quienes hoy la integran; se
+      revisa y amplía conforme se documentan nuevas contribuciones.</p>
+    </div>
+
+    <div class="creditos-liderazgo">
+      <p>Este trabajo encuentra su lugar dentro de MCCI gracias a la conducción de:</p>
+      <p class="creditos-firma">Dra. María Amparo Casar
+        <span class="cargo">Presidenta de Mexicanos Contra la Corrupción y la Impunidad</span></p>
+      <p class="creditos-firma">Leonardo Núñez González
+        <span class="cargo">Director de la Unidad de Investigación Aplicada</span></p>
     </div>
   </div>
 
