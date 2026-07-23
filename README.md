@@ -5,6 +5,10 @@ Investigación Aplicada de **Mexicanos Contra la Corrupción y la Impunidad (MCC
 
 Sitio: https://leonugo.github.io/monitor-casos-corrupcion-mcci/
 
+Este mismo buscador también se publica hacia adentro, para el equipo de MCCI, como la app
+**"La Cuenta Larga"** dentro de Tlacuilo (`https://datos.contralacorrupcion.mx/`) — ver
+`05_documentos/proyecto-la-cuenta-larga.md` para esa integración.
+
 ## Metodología
 
 La metodología completa de cómo se seleccionan, clasifican e incorporan los casos está
